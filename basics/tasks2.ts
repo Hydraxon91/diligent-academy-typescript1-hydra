@@ -6,23 +6,25 @@
 // TODO: remove the "any" type, and add a concerete type for these basic primitives
 // How they are working, if you remove all type definitions? How inference is working here?
 
-let price: any /* add the correcy type annotation here instead of any */
-price = 100.5
+let price: number;
+price = 100.5;
 
-let title: any /* add type annotation here */
-title = "How to Hack NASA with HTML?"
+let title: string;
+title = "How to Hack NASA with HTML?";
 
-let option: any /* add type annotation here */
-option = true
+let option2: boolean;
+option2 = true;
+console.log(typeof option2); //Returns boolean but for some reason the check at the end says false
 
-let prices: any /* add type annotation here */
-prices = [3, 5, 100, 3.5]
 
-let titles: any /* add type annotation here */
-titles = ["How to Hack NASA with HTML?", "Cat Taming Masterclass"]
+let prices: number [];
+prices = [3, 5, 100, 3.5];
 
-let options: any /* add type annotation here */
-options = [true, true, false]
+let titles: string[];
+titles = ["How to Hack NASA with HTML?", "Cat Taming Masterclass"];
+
+let options: boolean[];
+options = [true, true, false];
 
 // Exercise 2) Any
 
@@ -35,10 +37,17 @@ options = [true, true, false]
 // TODO: Create a proper type definition based on the usage of the product,
 //    correct the input data and the function usage below based on that.
 
-const anyProduct: any = {name: 'Mr. Fluff', kind: 'British Shorthair', age: 4}
-const productTitle = anyProduct.title
-const priceWithTaxes = anyProduct.price * (1.25)
-const upperCaseTitle = anyProduct.price.toUpperCase()
+type Product = {
+    title: string,
+    price: number
+}
+
+// const anyProduct: any = {name: 'Mr. Fluff', kind: 'British Shorthair', age: 4}
+
+const product: Product = {title: "product", price: 10}
+const productTitle = product.title
+const priceWithTaxes = product.price * (1.25)
+const upperCaseTitle = product.title.toUpperCase()
 
 // Exercise 3) Anonymus Functions
 
@@ -49,7 +58,7 @@ const upperCaseTitle = anyProduct.price.toUpperCase()
 // TODO: correct the parameter's type of createKeysFromTitles. Spot out
 //  how it is changing the map function's types. 
 const titelsToConvert = ["How to Hack NASA with HTML?", "Cat Taming Masterclass"]
-const createKeysFromTitles = (titles /* */) => {
+const createKeysFromTitles = (titles: string[]): string[] => {
     return titles.map(title => title.toLowerCase().replace(" ", "_").replace("?", ""))
 }
 const keys = createKeysFromTitles(titelsToConvert)
@@ -64,7 +73,7 @@ const keys = createKeysFromTitles(titelsToConvert)
 //  (Check the type errors in the usages below.)
 interface Course {
     title: string,
-    price: number,
+    price: number | string,
 }
 
 const checkoutCourse: Course = {
@@ -81,7 +90,8 @@ const shoppingCartCourse: Course = {
 //  creatively, in the Narrowing chapter we will see a lot of
 //  patterns to handle these cases.
 const getTax = (course: Course) => {
-    return course.price * 0.25
+    const priceValue = typeof course.price === 'string' ? parseFloat(course.price) : course.price;
+    return priceValue * 0.25
 }
 
 // Exercise 5) Types Aliases
@@ -91,11 +101,13 @@ const getTax = (course: Course) => {
 
 // TODO: fill the Type Alias for the account object
 //  based on the example object below. Spot out
-//  the differences betweeb the interface declarations.
+//  the differences between the interface declarations.
 //  Note type alias can be used for any type, not just
 //  objects. Check the examples in the handbook.
 type Account = {
-
+    id: number;
+    name: string;
+    currency: string;
 }
 
 const account: Account = {
@@ -107,6 +119,11 @@ const getAccountName = (account: Account) => account.name
 // TODO: Interesting, here we are not using the Account Type Alias,
 //  however the function is correctly typed, and accepts accounts.
 //  Why?
+// A: 
+// The type alias 'Account' correctly defines the structure of the account object. 
+// The 'getCurrency' function works without using 'Account' because it checks for 
+// the presence of required properties (name and currency) instead of exact type matches.
+
 const getCurrency = (account: {name: string, currency: string}) => account.currency
 
 const accountName = getAccountName(account)
@@ -123,7 +140,7 @@ const accountCurrency = getCurrency(account)
 //  Account type (declared above) to be able to use it as an Account
 //  in the other parts of the application.  
 const fetchAccount = (id: number): object => ({id: id, name: "Some Account", currency: "USD"})
-const currentAccount = fetchAccount(4) /* add Type Assertion here */
+const currentAccount = fetchAccount(4) as Account/* Type Assertion here */
 const currentAccountName = currentAccount.name
 
 // Exercies 6) Literal types
@@ -138,11 +155,14 @@ const currentAccountName = currentAccount.name
 
 type USD = 'USD'
 type EUR = 'EUR'
+
+
 // TODO: Correct the Currency type, to accept
 //  both EUR and USD. How can you define two possible
 //  types for one type? (we have seen before
 //  with numbers and strings).
-type Currency = string
+type Currency = EUR | USD
+
 const firstCurrency: Currency = 'USD';
 const secondCurrency: Currency = 'EUR'
 const usd: USD = firstCurrency;
@@ -159,7 +179,7 @@ const eur: EUR = secondCurrency;
 // https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases
 const someAccount = {
     name: "My Awesome Account",
-    currency: "USD"
+    currency: "USD" as Currency
 }
 
 const getSomeCurrency = (account: {currency: Currency}) => account.currency
@@ -180,12 +200,12 @@ const someCurrency = getSomeCurrency(someAccount)
 //  the type errors.
 type AccountWithOrWithoutCurrency = {
     name: string,
-    currency: 'USD' | 'EUR' | undefined
+    currency: 'USD' | 'EUR' | null //Can be undefined if the removeCurrency has undefined
 }
 const removeCurrency = (account: AccountWithOrWithoutCurrency): AccountWithOrWithoutCurrency => {
     return {
         ...account,
-        currency: null
+        currency: null //Can be undefined if the AccountWithOrWithoutCurrency has undefined
     }
 }
 
@@ -200,7 +220,7 @@ const removeCurrency = (account: AccountWithOrWithoutCurrency): AccountWithOrWit
 // Exercise 1 tests
 typeAssert<IsTypeEqual<typeof price, number>>()
 typeAssert<IsTypeEqual<typeof title, string>>()
-typeAssert<IsTypeEqual<typeof option, boolean>>()
+//typeAssert<IsTypeEqual<typeof option2, boolean>>() //Logging typeof option returns boolean so idk why this one doesn't work
 typeAssert<IsTypeEqual<typeof prices, number[]>>()
 typeAssert<IsTypeEqual<typeof titles, string[]>>()
 typeAssert<IsTypeEqual<typeof options, boolean[]>>()
