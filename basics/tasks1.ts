@@ -9,7 +9,14 @@
 // Date.parse (you can hover your mouse over it).
 
 export interface Product {
-    /* TODO: fill the type declarations */
+
+    id: number,
+    title: string,
+    price: string,
+    createdAt: number,
+    currency: 'HUF' | 'EUR' | 'USD'; 
+    type: 'Course' | 'Program'; 
+    relatedCourses: Product[];
   }
   
   const products: Product[] = [
@@ -57,11 +64,11 @@ export interface Product {
   // Add type annotations to the arguements and return types 
   // of these two functions. 
   
-  function filterCourses(products /* add type annotation here */) /* add type annotation here */ {
+  function filterCourses(products: Product[] ): Product[]  {
     return products.filter(product => product.type === 'Course')
   }
   
-  function getTitles(products /* add type annotation here */) /* add type annotation here */ {
+  function getTitles(products: Product[]) :string[]{
    return products.map(product => product.title)
   }
   
@@ -73,6 +80,13 @@ export interface Product {
   // When do you see "any", and when something else?
   
   // This two functions just here to check the proper return type in the tests.
+
+  // A: 
+  // TypeScript infers return types correctly (e.g., Product[] for filterCourses, string[] for getTitles).
+  // However, function parameters default to 'any' if not explicitly typed, losing type safety.
+  // It's important to define parameter types (e.g., products: Product[]) explicitly, 
+  // while return types can often be inferred.
+
   const courses = filterCourses(products)
   const titles = getTitles(products)
   
@@ -82,6 +96,12 @@ export interface Product {
   // typescript error? Why? 
   // Spot that the inline type annotation here is different than the
   // Product's type definition.  
+
+
+  //A:
+  // TypeScript allows passing a Product object to formatPrice because it contains the required properties (price and currency), 
+  // even if it has extra fields like id and title. This works due to TypeScript's structural typing.
+
   function formatPrice(product: {price: string, currency: string}) {
     return `${product.price} ${product.currency}`
   }
