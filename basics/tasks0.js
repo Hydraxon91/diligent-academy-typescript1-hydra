@@ -1,20 +1,14 @@
 // const num: number = 10;
-var getArea = function (shape) {
-    if (isCircle(shape)) {
-        return Math.PI * shape.rad * shape.rad;
+function logPersonProperties(person) {
+    for (var key in person) {
+        if (person.hasOwnProperty(key)) {
+            var val = person[key];
+            console.log(val);
+        }
     }
-    return shape.side * shape.side;
+}
+var p1 = {
+    name: "Asd",
+    age: 12
 };
-var isCircle = function (shape) {
-    return shape.kind === 'circle';
-};
-var circle = {
-    kind: 'circle',
-    rad: 10
-};
-var square = {
-    kind: 'square',
-    side: 10
-};
-console.log(getArea(circle));
-console.log(getArea(square));
+logPersonProperties(p1);
