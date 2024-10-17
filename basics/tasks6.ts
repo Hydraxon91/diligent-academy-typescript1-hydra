@@ -13,7 +13,8 @@ interface FeatureFlagActivators {
 }
 
 // TODO: define the Flag type to avoid the errors in the Function.
-type Flag = unknown
+type Flag = keyof FeatureFlagActivators;
+
 const featureFlagEnabler = (flag: Flag, activators: FeatureFlagActivators) => {
     activators[flag]()
 }
@@ -25,7 +26,7 @@ const featureFlagEnabler = (flag: Flag, activators: FeatureFlagActivators) => {
 // TODO define the Field type which determines
 //  the given column which field should be displayed
 //  from the row.  
-type Field = unknown
+type Field = keyof Row
 
 interface Row {
     title: string,
@@ -71,7 +72,7 @@ interface Cart {
 }
 
 // TODO: Define a Curator type from the Cart interface only.
-type Curator = unknown
+type Curator = Cart[`products`][0][`curator`]
 
 const getCuratorName = (curator: Curator) => curator.name
 
@@ -138,3 +139,5 @@ type GetAccountById = (id: number) => Account
 //  from the GetAccountById's argument type and return type:
 type GetIdFromAccount = unknown
 const getIdFromAccount: GetIdFromAccount = (account) => account.id
+
+export{}
